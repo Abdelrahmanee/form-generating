@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نموذج التقديم - Spider Agency</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .form-container {
+            padding: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .required {
+            color: #ff4757;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #fafafa;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input {
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
+        }
+        
+        .file-label {
+            display: block;
+            padding: 15px;
+            border: 2px dashed #4ecdc4;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+        
+        .file-label:hover {
+            background-color: #4ecdc4;
+            color: white;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4ecdc4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕷️ Spider Agency</h1>
+            <p>نموذج التقديم للتدريب</p>
+        </div>
+        
+        <div class="form-container">
+            <div id="message" class="message"></div>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>جارِ إرسال طلبك...</p>
+            </div>
+            
+            <form id="applicationForm" enctype="multipart/form-data">
+                <!-- النوع -->
+                <div class="form-group">
+                    <label>النوع <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="male" name="gender" value="ذكر" required>
+                            <label for="male">ذكر</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="female" name="gender" value="أنثى" required>
+                            <label for="female">أنثى</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الاسم -->
+                <div class="form-group">
+                    <label for="fullName">الاسم الثلاثي <span class="required">*</span></label>
+                    <input type="text" id="fullName" name="fullName" required placeholder="مثال: أحمد محمد علي">
+                </div>
+
+                <!-- تاريخ الميلاد -->
+                <div class="form-group">
+                    <label for="birthDate">تاريخ الميلاد <span class="required">*</span></label>
+                    <input type="date" id="birthDate" name="birthDate" required>
+                </div>
+
+                <!-- رقم التليفون -->
+                <div class="form-group">
+                    <label for="phoneNumber">رقم التليفون (واتساب) <span class="required">*</span></label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="01xxxxxxxxx">
+                </div>
+
+                <!-- الصورة -->
+                <div class="form-group">
+                    <label for="image">صورتك الشخصية <span class="required">*</span></label>
+                    <div class="file-upload">
+                        <input type="file" id="image" name="image" class="file-input" accept="image/*" required>
+                        <label for="image" class="file-label">
+                            📷 اضغط لاختيار صورتك (الحد الأقصى 100MB)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- الايميل -->
+                <div class="form-group">
+                    <label for="email">الايميل <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required placeholder="example@email.com">
+                </div>
+
+                <!-- الجامعة -->
+                <div class="form-group">
+                    <label for="university">الجامعة <span class="required">*</span></label>
+                    <input type="text" id="university" name="university" required placeholder="مثال: جامعة القاهرة">
+                </div>
+
+                <!-- الكلية -->
+                <div class="form-group">
+                    <label for="college">الكلية <span class="required">*</span></label>
+                    <input type="text" id="college" name="college" required placeholder="مثال: كلية التجارة">
+                </div>
+
+                <!-- تاريخ التخرج -->
+                <div class="form-group">
+                    <label for="graduationDate">تاريخ التخرج أو المتوقع <span class="required">*</span></label>
+                    <input type="date" id="graduationDate" name="graduationDate" required>
+                </div>
+
+                <!-- العنوان -->
+                <div class="form-group">
+                    <label for="address">العنوان <span class="required">*</span></label>
+                    <input type="text" id="address" name="address" required placeholder="العاشر من رمضان">
+                </div>
+
+                <!-- خبرة التسويق -->
+                <div class="form-group">
+                    <label>لديك أي خبرة في التسويق؟ <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="hasExpYes" name="hasMarketingExperience" value="نعم" required>
+                            <label for="hasExpYes">نعم</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="hasExpNo" name="hasMarketingExperience" value="لا" required>
+                            <label for="hasExpNo">لا</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تفاصيل الخبرة -->
+                <div class="form-group">
+                    <label for="marketingExperience">ما هي خبرتك حتى لو لم تكن عملية؟</label>
+                    <textarea id="marketingExperience" name="marketingExperience" placeholder="اكتب خبرتك في التسويق هنا..."></textarea>
+                </div>
+
+                <!-- أهداف التدريب -->
+                <div class="form-group">
+                    <label for="trainingGoals">ما هي أهدافك من التدريب في Spider Agency؟ <span class="required">*</span></label>
+                    <textarea id="trainingGoals" name="trainingGoals" required placeholder="اكتب أهدافك من التدريب..."></textarea>
+                </div>
+
+                <!-- فكرة المنتج -->
+                <div class="form-group">
+                    <label for="productIdea">اختار منتج وطلعله فكرة مطرقعة <span class="required">*</span></label>
+                    <textarea id="productIdea" name="productIdea" required placeholder="اختر منتج واكتب فكرة إبداعية للتسويق له..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">📤 إرسال طلب التقديم</button>
+            </form>
+        </div>
+    </div>
+<script>
+    document.getElementById('applicationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const submitBtn = document.querySelector('.submit-btn');
+        const loading = document.getElementById('loading');
+        const message = document.getElementById('message');
+        
+        message.style.display = 'none';
+        
+        loading.style.display = 'block';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'جارِ الإرسال...';
+        
+        try {
+            const response = await fetch('/api/spider-agency/apply', {
+                method: 'POST',
+                body: formData
+            });
+            console.log("response" + JSON.stringify(response ,null , 2))
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                message.className = 'message success';
+                message.innerHTML = `
+                    ✅ ${result.message}<br>
+                    👤 الاسم: ${result.data.applicantName}<br>
+                    📅 التاريخ: ${result.data.submissionDate}
+                `;
+                this.reset(); // مسح النموذج
+                // نرجع نص اختيار الصورة بعد الريست
+                document.querySelector('.file-label').textContent = '📷 اضغط لاختيار صورتك (الحد الأقصى 100MB)';
+            } else {
+                message.className = 'message error';
+                message.textContent = result.message;
+            }
+            
+        } catch (error) {
+            message.className = 'message error';
+            message.textContent = 'حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.';
+        } finally {
+            loading.style.display = 'none';
+            message.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.textContent = '📤 إرسال طلب التقديم';
+        }
+    });
+    
+    // تحديث نص رفع الملف عند اختيار صورة
+    document.getElementById('image').addEventListener('change', function() {
+        const label = document.querySelector('.file-label');
+        if (this.files[0]) {
+            label.textContent = `✅ تم اختيار: ${this.files[0].name}`;
+        } else {
+            label.textContent = '📷 اضغط لاختيار صورتك (الحد الأقصى 100MB)';
+        }
+    });
+</script>
+
+</body>
+</html>
